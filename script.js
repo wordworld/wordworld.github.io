@@ -183,7 +183,7 @@ async function submitComment() {
         const newComment = {
             content: content,
             author: {
-                name: '匿名用户'
+                name: ' I AM Light'
             },
             createdAt: firebase.database.ServerValue.TIMESTAMP
         };
