@@ -113,122 +113,107 @@ function initSuSwipers() {
     });
 }
 
+// API配置
+const API_URL = 'http://localhost:5000/api';
 let isAdmin = false;
 
-// GitHub 配置
-const GITHUB_REPO = 'wordworld/wordworld.github.io';
-const GITHUB_ISSUES_API = `https://api.github.com/repos/${GITHUB_REPO}/issues`;
-const ISSUE_NUMBER = 1; // 用第一个 issue 来存储评论
-const GITHUB_TOKEN = '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';
-
 // 显示评论
-async function loadComments() {
+function loadComments() {
     const commentsContainer = document.querySelector('.comments-container');
-    const loadingElement = document.querySelector('.loading-comments');
     
     try {
-        loadingElement.style.display = 'block';
-        
-        // 从 GitHub Issues 获取评论
-        const response = await fetch(`${GITHUB_ISSUES_API}/${ISSUE_NUMBER}/comments`);
-        const comments = await response.json();
+        // 从本地存储获取评论
+        const comments = JSON.parse(localStorage.getItem('comments') || '[]');
         
         if (comments.length === 0) {
             commentsContainer.innerHTML = '<p class="no-comments">还没有评论，来说点什么吧~</p>';
             return;
         }
         
-        commentsContainer.innerHTML = comments.map(comment => {
-            const commentData = JSON.parse(comment.body);
-            return `
-                <div class="comment">
-                    <div class="comment-header">
-                        <span class="comment-author">${commentData.author}</span>
-                        <span class="comment-date">${new Date(comment.created_at).toLocaleDateString()}</span>
-                    </div>
-                    <div class="comment-content">${commentData.content}</div>
+        commentsContainer.innerHTML = comments.map(comment => `
+            <div class="comment">
+                <div class="comment-header">
+                    <span class="comment-author">${comment.author.name}</span>
+                    <span class="comment-date">${new Date(comment.createdAt).toLocaleDateString()}</span>
                 </div>
-            `;
-        }).join('');
+                <div class="comment-content">${comment.content}</div>
+            </div>
+        `).join('');
     } catch (error) {
         console.error('加载评论失败:', error);
         commentsContainer.innerHTML = '<p class="error">加载评论失败，请稍后再试</p>';
-    } finally {
-        loadingElement.style.display = 'none';
     }
 }
 
-// 提交评论
-async function submitComment(content) {
+// 举报评论
+async function reportComment(commentId) {
     try {
-        // 创建评论数据
-        const commentData = {
-            author: '匿名用户',
-            content: content
-        };
-        
-        // 提交到 GitHub Issues
-        const response = await fetch(`${GITHUB_ISSUES_API}/${ISSUE_NUMBER}/comments`, {
-            method: 'POST',
+        const response = await fetch(`${API_URL}/comments/${commentId}/report`, {
+            method: 'POST'
+        });
+        const result = await response.json();
+        alert(result.message);
+    } catch (error) {
+        console.error('举报失败:', error);
+        alert('举报失败，请稍后再试');
+    }
+}
+
+// 更新评论状态
+async function updateCommentStatus(commentId, status) {
+    try {
+        const response = await fetch(`${API_URL}/comments/${commentId}/status`, {
+            method: 'PATCH',
             headers: {
-                'Authorization': `token ${GITHUB_TOKEN}`,
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                body: JSON.stringify(commentData)
-            })
+            body: JSON.stringify({ status })
         });
-        
-        if (!response.ok) {
-            throw new Error('评论提交失败');
-        }
-        
-        return true;
+        const result = await response.json();
+        alert(result.message);
+        loadAdminComments();
+        loadComments();
     } catch (error) {
-        console.error('提交评论失败:', error);
-        return false;
+        console.error('更新评论状态失败:', error);
+        alert('更新评论状态失败，请稍后再试');
     }
 }
 
-// 删除评论（管理员功能）
+// 删除评论
 async function deleteComment(commentId) {
-    try {
-        const response = await fetch(`${GITHUB_ISSUES_API}/comments/${commentId}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `token ${GITHUB_TOKEN}`
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error('删除评论失败');
+    if (confirm('确定要删除这条评论吗？')) {
+        try {
+            const response = await fetch(`${API_URL}/comments/${commentId}`, {
+                method: 'DELETE'
+            });
+            const result = await response.json();
+            alert(result.message);
+            loadAdminComments();
+            loadComments();
+        } catch (error) {
+            console.error('删除评论失败:', error);
+            alert('删除评论失败，请稍后再试');
         }
-        
-        return true;
-    } catch (error) {
-        console.error('删除评论失败:', error);
-        return false;
     }
 }
 
 // 加载所有评论（管理员视图）
-async function loadAdminComments() {
+function loadAdminComments() {
     const adminCommentsContainer = document.querySelector('.admin-comments');
     
     try {
-        // 从 GitHub Issues 获取评论
-        const response = await fetch(`${GITHUB_ISSUES_API}/${ISSUE_NUMBER}/comments`);
-        const comments = await response.json();
+        // 从本地存储获取所有评论
+        const comments = JSON.parse(localStorage.getItem('comments') || '[]');
         
         adminCommentsContainer.innerHTML = comments.map(comment => `
             <div class="admin-comment">
                 <div class="comment-header">
-                    <span class="comment-author">${JSON.parse(comment.body).author}</span>
-                    <span class="comment-date">${new Date(comment.created_at).toLocaleDateString()}</span>
+                    <span class="comment-author">${comment.author.name}</span>
+                    <span class="comment-date">${new Date(comment.createdAt).toLocaleDateString()}</span>
                 </div>
-                <div class="comment-content">${JSON.parse(comment.body).content}</div>
+                <div class="comment-content">${comment.content}</div>
                 <div class="admin-actions">
-                    <button class="delete-btn" onclick="deleteAdminComment('${comment.id}')">删除</button>
+                    <button class="delete-btn" onclick="deleteAdminComment('${comment._id}')">删除</button>
                 </div>
             </div>
         `).join('');
@@ -239,20 +224,16 @@ async function loadAdminComments() {
 }
 
 // 管理员删除评论
-async function deleteAdminComment(commentId) {
+function deleteAdminComment(commentId) {
     if (confirm('确定要删除这条评论吗？')) {
         try {
-            const response = await fetch(`${GITHUB_ISSUES_API}/comments/${commentId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error('删除评论失败');
-            }
-            
+            // 从本地存储获取评论
+            const comments = JSON.parse(localStorage.getItem('comments') || '[]');
+            // 过滤掉要删除的评论
+            const newComments = comments.filter(comment => comment._id !== commentId);
+            // 保存更新后的评论列表
+            localStorage.setItem('comments', JSON.stringify(newComments));
+            // 重新加载评论列表
             loadComments();
             loadAdminComments();
             alert('评论已删除！');
@@ -322,20 +303,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitButton = document.getElementById('submitComment');
     const contentInput = document.getElementById('content');
 
-    submitButton.addEventListener('click', async () => {
+    submitButton.addEventListener('click', () => {
         const content = contentInput.value.trim();
         if (!content) {
             alert('请输入评论内容！');
             return;
         }
         
-        const success = await submitComment(content);
-        if (success) {
+        try {
+            // 从本地存储获取现有评论
+            const comments = JSON.parse(localStorage.getItem('comments') || '[]');
+            
+            // 创建新评论
+            const newComment = {
+                _id: Date.now().toString(),
+                content: content,
+                author: {
+                    name: '匿名用户'
+                },
+                createdAt: new Date().toISOString(),
+                status: 'approved'
+            };
+            
+            // 添加新评论到数组开头（最新的评论显示在最上面）
+            comments.unshift(newComment);
+            
+            // 保存到本地存储
+            localStorage.setItem('comments', JSON.stringify(comments));
+            
+            // 清空输入框并重新加载评论
             contentInput.value = '';
             loadComments();
+            
             alert('评论提交成功！');
-        } else {
-            alert('评论提交失败，请稍后再试');
+        } catch (error) {
+            console.error('提交评论失败:', error);
+            alert('提交评论失败，请稍后再试');
         }
     });
 
