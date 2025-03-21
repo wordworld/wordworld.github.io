@@ -3,62 +3,62 @@ const videos = [
     {
         title: "闪耀 SHINE 直拍",
         url: "https://b23.tv/PlVoA3v",
-        thumbnail: "images/shine-cover.jpg" // 使用实际的封面图片路径
+        thumbnail: "shine-cover.jpg" // 使用实际的封面图片路径
     },
     {
         title: "一天一天 直拍",
         url: "https://b23.tv/D7RTtPh",
-        thumbnail: "images/oneday-cover.jpg"
+        thumbnail: "oneday-cover.jpg"
     },
     {
         title: "怪胎秀 横版4K直拍",
         url: "https://b23.tv/VH9qvJ3",
-        thumbnail: "images/monster-cover.jpg"
+        thumbnail: "monster-cover.jpg"
     },
     {
         title: "LALALALA 直拍",
         url: "https://b23.tv/CCQqJQR",
-        thumbnail: "images/lalalala-cover.jpg"
+        thumbnail: "lalalala-cover.jpg"
     },
     {
         title: "Dynamite Cover",
         url: "https://b23.tv/axTAHVn",
-        thumbnail: "images/dynamite-cover.jpg"
+        thumbnail: "dynamite-cover.jpg"
     },
     {
         title: "明天地球要爆炸 直拍",
         url: "https://b23.tv/ZpFCCMO",
-        thumbnail: "images/earth-cover.jpg"
+        thumbnail: "earth-cover.jpg"
     },
     {
         title: "娃娃脸 直拍",
         url: "https://b23.tv/Wb23sXL",
-        thumbnail: "images/doll-cover.jpg"
+        thumbnail: "doll-cover.jpg"
     },
     {
         title: "Baggy Jeans 双机位直拍",
         url: "https://b23.tv/QErvNqP",
-        thumbnail: "images/baggy-cover.jpg"
+        thumbnail: "baggy-cover.jpg"
     },
     {
         title: "Guilty 四机位直拍",
         url: "https://b23.tv/0Ty4jMq",
-        thumbnail: "images/guilty-cover.jpg"
+        thumbnail: "guilty-cover.jpg"
     },
     {
         title: "盖世英雄 四机位直拍",
         url: "https://b23.tv/4d0qjwH",
-        thumbnail: "images/hero-cover.jpg"
+        thumbnail: "hero-cover.jpg"
     },
     {
         title: "耶yeah 4K直拍",
         url: "https://b23.tv/AVyM6fB",
-        thumbnail: "images/yeah-cover.jpg"
+        thumbnail: "yeah-cover.jpg"
     },
     {
         title: "十八岁生日音乐分享小会",
         url: "https://b23.tv/JChQHhq",
-        thumbnail: "images/birthday-cover.jpg"
+        thumbnail: "birthday-cover.jpg"
     }
 ];
 
