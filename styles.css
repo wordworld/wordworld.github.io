@@ -1,4 +1,4 @@
-:root {
+root {
     --primary-color: #F19483;
     --secondary-color: #EE3F4D;
     --text-color: #333;
@@ -450,20 +450,22 @@ footer {
 }
 
 .fan-messages {
+    height: 6200px;
     padding: 2rem;
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
 }
 
-.fan-messages h2 {
-    color: var(--primary-color);
-    margin-bottom: 1.5rem;
-    text-align: center;
+.message-form {
+    flex-shrink: 0;
 }
 
 .messages-list {
-    max-height: 5000px;
+    flex-grow: 1;
+    height: 6000px;
     overflow-y: auto;
     padding: 1rem;
     background: #fff;
@@ -472,9 +474,34 @@ footer {
 }
 
 .comments-container {
+    height: 100%;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 1rem;
+}
+
+/* 自定义滚动条样式 */
+.messages-list::-webkit-scrollbar,
+.comments-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.messages-list::-webkit-scrollbar-track,
+.comments-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.messages-list::-webkit-scrollbar-thumb,
+.comments-container::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+.messages-list::-webkit-scrollbar-thumb:hover,
+.comments-container::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
 }
 
 .comment {
@@ -482,21 +509,17 @@ footer {
     padding: 1rem;
     border-radius: 8px;
     border-left: 4px solid var(--primary-color);
+    margin-bottom: 1rem;
 }
 
-.comment-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    color: #666;
-    font-size: 0.9rem;
+.comment:last-child {
+    margin-bottom: 0;
 }
 
-.comment-content {
-    color: #333;
-    line-height: 1.5;
-    word-break: break-word;
+.fan-messages h2 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
 }
 
 .no-comments {
@@ -746,7 +769,7 @@ footer {
 }
 
 .comments-container {
-    max-height: 5000px;
+    max-height: 5800px;
     overflow-y: auto;
     padding-right: 10px;
     margin-top: 20px;
@@ -788,7 +811,7 @@ footer {
 }
 
 .fan-messages {
-    height: 5200px;
+    height: 6000px;
     display: flex;
     flex-direction: column;
 }
